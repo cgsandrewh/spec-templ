@@ -1,0 +1,38 @@
+# Decision policy: what the agent may decide on its own. Protected after H2.
+# Sections (all required): triggers, decisions.
+# Extends the template defaults for the project's NFR profile. Classification only escalates.
+# Matchers: path (glob), tag (data-model.md column tag), topic (free label).
+
+triggers:                                   # PR risk level: blocking | flagged
+  - { path: "infra/**", topic: iam, level: blocking }
+  - { path: "db/migrations/**", topic: destructive-migration, level: blocking }
+  - { tag: pii, level: flagged }
+  - { topic: aws-cost, threshold: "+20%", level: blocking }
+  # - { path: "<critical file>", level: blocking }
+
+decisions:
+  tier3:                                    # one-way doors, on top of accepted T3 ADRs
+    - { path: "domain.md" }
+    # - { topic: entity-identity, entities: [<Entity>] }
+  escalate:
+    - { path: "db/migrations/**", tier: 2 }
+    - { path: "contracts/**", tier: 2 }
+    - { path: "roles.yaml", tier: 2 }
+    - { tag: pii, tier: 2 }
+    - { topic: design-gap, tier: 2 }
+    - { topic: nfr-relaxation, tier: 2 }
+    - { topic: vendor-change, tier: 3 }
+  spec_flexible:                            # T1, no CR needed
+    - "<e.g. helper copy, sort order, page size>"
+  adrs:
+    binding: "adr/*.md with status accepted"
+    run_first: "adr/*.md with status open"
+  on_pending_cr: { scope: branch, escalate_after: 24h, allow_stub: false }   # scope: branch | run
+  autonomy:
+    max_open_assumptions: 10
+    high_impact: [{ tag: pii }]
+    spike_budget: { tasks: <n>, hours: <n>, aws_usd: <n> }
+    new_dependency:
+      allowed_if: "license in project.yaml allowlist and weekly downloads > 100k"
+      else_tier: 2
+  stale: { merged_work: re-review }        # re-review | auto-rework

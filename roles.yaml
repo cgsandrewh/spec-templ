@@ -1,0 +1,20 @@
+# Permissions matrix.
+# Sections (all required): roles, permissions, separation_of_duties.
+# Generates the authorization policy and a test suite: every (role, action, scope) cell gets an
+# allowed and a denied test. Anything not listed is denied.
+#
+# scope values (define the ones you use):
+#   own   – resources the user created
+#   all   – everything
+#   <custom> – <definition>
+
+roles:
+  <role>:
+    description: <who>
+    # derived: "<condition>"        # for roles computed from data rather than assigned
+
+permissions:
+  <resource>.<action>: { <role>: <scope>, <role>: <scope> }
+
+separation_of_duties:
+  - "<rule, e.g. no one approves their own request>"

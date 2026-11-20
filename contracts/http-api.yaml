@@ -1,0 +1,33 @@
+# HTTP API contract (OpenAPI 3.1). Delete this file if the project has no HTTP API.
+# Conventions to state in info.description: auth, error format, how amounts/dates are encoded,
+# what a forbidden read returns (403 vs 404), idempotency.
+openapi: 3.1.0
+info:
+  title: <project> HTTP API
+  version: 1.0.0
+  description: >
+    <auth mechanism>. Authorization per roles.yaml. Errors use application/problem+json.
+servers:
+  - url: /api
+
+paths:
+  /<resources>:
+    get:
+      summary: <what> (<S-n>)
+      responses:
+        '200': { description: OK }
+
+components:
+  responses:
+    Problem:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            type: object
+            required: [type, title, status]
+            properties:
+              type: { type: string }
+              title: { type: string }
+              status: { type: integer }
+  schemas: {}

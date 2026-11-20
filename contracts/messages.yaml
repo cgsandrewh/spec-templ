@@ -1,0 +1,24 @@
+# Async message contracts. Delete this file if the project has no queues or events.
+# Sections (all required): envelope, messages.
+# State here: transport, delivery guarantee, retry / DLQ policy, versioning rule.
+
+envelope:
+  type: object
+  required: [id, type, version, occurred_at, payload]
+  properties:
+    id: { type: string, format: uuid }
+    type: { type: string }
+    version: { type: integer, minimum: 1 }
+    occurred_at: { type: string, format: date-time }
+    payload: { type: object }
+
+messages:
+  <domain>.<event>:
+    version: 1
+    producer: <component / schedule>
+    consumer: <component › module>
+    effect: <what the consumer does>
+    payload:
+      type: object
+      required: []
+      properties: {}

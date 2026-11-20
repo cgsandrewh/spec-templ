@@ -1,0 +1,53 @@
+# Project parameters.
+# Sections (all required): meta, nfr, constraints.
+# `nfr.profile` sets template defaults (infra sizing, verify thresholds, risk.yaml tiers);
+# explicit values override them. Delete a key to take the profile default.
+
+meta:
+  name: <short-name>
+  summary: >
+    <2–3 sentences: who uses it, what it does, what it replaces>
+  template: <next-node-pg>
+  spec_version: 1
+
+nfr:
+  profile: <prototype | internal | production>
+
+  users:
+    total: <n>                      # registered accounts, year 1
+    peak_concurrent: <n>
+    growth_12m: <e.g. 2x>
+
+  performance:                      # check: k6 at 2x peak, L5
+    peak_rps: <n>
+    p95_ms: { read: <ms>, write: <ms> }
+    page_weight_kb: <kb>            # check: Lighthouse budget, L5
+
+  availability:
+    target: "<e.g. 99.5%>"
+    maintenance_window: "<day hh:mm-hh:mm tz | none>"
+    rto: <duration>                 # how long it may be down after a failure
+    rpo: <duration>                 # how much data it may lose
+
+  data:
+    integrity: <relaxed | standard | strict>   # strict: money / legal records; cite the ADRs
+    <entity>_per_month: <n>         # main volume driver; also sizes seed data
+
+  security:
+    auth: <sso-oidc | email-password | magic-link | ...>
+    session_timeout: <duration>
+
+  ux:
+    browsers: [<chrome-last-2>, ...]
+    devices: [<desktop>, <mobile-web>]
+    accessibility: <WCAG-2.2-AA | none>   # check: axe in L4a
+    locales: [<en>]
+    timezone: <IANA tz>
+
+constraints:
+  aws_region: <region>
+  aws_monthly_budget_usd: <n>       # risk.yaml blocks changes estimated above the threshold
+  deadline: <YYYY-MM-DD | ~>
+  licenses_allowed: [MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC]
+  packages_banned: []
+  golden_project: <git url | ~>     # reference repo to extract rules from

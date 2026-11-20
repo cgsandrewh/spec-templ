@@ -1,0 +1,19 @@
+# Third-party services.
+# Every integration sits behind an interface with a local fake (used everywhere except preview
+# deploys) and a contract test that runs against the fake always and the sandbox when one exists.
+# An integration whose ADR is still open isn't trusted until that ADR is resolved.
+#
+# Fields (all required; use ~ when not applicable):
+#   purpose, stories, vendor, mode (sync | async), sandbox, fake, failure_mode, adr
+# Optional: contract (path under contracts/ for file or payload formats you don't own)
+
+integrations:
+  <name>:
+    purpose: <what for>
+    stories: [<S-n>]
+    vendor: <vendor / protocol>
+    mode: <sync | async>
+    sandbox: <test tenant / sandbox keys | ~>
+    fake: <how it's faked locally>
+    failure_mode: <what the user sees / what the system does when it's down>
+    adr: <ADR-nnn | ~>
